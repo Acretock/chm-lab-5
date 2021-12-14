@@ -409,6 +409,51 @@ inline void generation(vector<vector<double>>& A1, vector<vector<double>>& A2, v
 	Vector_Generation(y);
 }
 
+void Matrix_Zeroing_Smal (vector<vector<double>>& A1)
+{
+	for (int i = 0; i < N; i++)
+	{
+		vector<double> a;
+		for (int j = 0; j < N; j++)
+		{
+			a.push_back(0.0);
+		}
+		A1.push_back(a);
+	}
+}
+void Matrix_Generation_Off_Diag_Small(vector<vector<double>>& A1)
+{
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = max(0, i - L); j <= min(i + L, N - 1); j++)
+		{
+			if (i != j)
+			{
+				double num;
+				num = (double)rand() * 2.0 / RAND_MAX - 1.0;
+				A1[i][j] = num;
+			}
+		}
+	}
+}
+void smallGeneration(vector<vector<double>>& A1, vector<double>& y, vector<double>& b1) {
+	cout << "Enter N and L" << endl;
+	cin >> N >> L;
+	cout << "generation begins" << endl;
+
+	Matrix_Zeroing_Smal(A1);
+	Matrix_Generation_Off_Diag_Small(A1);
+	Matrix_Generation_Diag(A1, 1.1);
+	vector<double> x;
+	Vector_Generation(x);
+	cout << "Exact answer: " << endl;
+	SumSq(x);
+	b1 = Multiplication_MV(A1, x);
+	b1 = Multiplication_MTV(A1, b1);
+	A1 = Multiplication_MTM(A1);
+	Vector_Generation(y);
+}
+
 void task_1() {
 	vector<vector<double>> A1, A2, A3;
 	Matrix_Zeroing(A1, A2, A3);
@@ -484,7 +529,7 @@ void task_4() {
 	CGM_Method(A2, y, b2, 2.0);
 	CGM_Method(A3, y, b3, 10.0);
 	cout << endl << "CGM Method done" << endl << "begin PCGM method" << endl;
-	generation(A1, A2, A3, x, y, b1, b2, b3);
+	smallGeneration(A1, y, b1);
 	PCGM_Method(A1, y, b1, 1.1, 1.0);
 	PCGM_Method(A1, y, b1, 1.1, 2.0);
 	PCGM_Method(A1, y, b1, 1.1, 3.0);
